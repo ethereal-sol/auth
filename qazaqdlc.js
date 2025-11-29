@@ -2,7 +2,7 @@ import {
     r as P,
     R as f,
     F as q
-} from './monaco-Dj3DcQT7.js';
+} from './monaco.js';
 (function() {
     const T = document['createElement']('link')['relList'];
     if (T && T['supports'] && T['supports']('modulepreload')) return;
