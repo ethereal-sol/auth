@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <title>перенаправляем на /download…</title>
+  <link rel="canonical" href="/download" />
+  <meta name="robots" content="noindex,follow" />
+  <script>
+    (function () {
+      var p = location.pathname;
+      if (/^\/download(?:\/|$)/.test(p)) return;
+      var target = '/download' + location.search + location.hash;
+      location.replace(target);
+    })();
+  </script>
+</head>
+<body>
+  <noscript>
+    если тебя не перенаправило, нажмите <a href="/download">сюда</a>.
+  </noscript>
+</body>
+</html>
