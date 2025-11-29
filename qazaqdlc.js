@@ -15439,7 +15439,7 @@ function CN() {
 }
 
 function FN() {
-    const T = CN(),
+    const T = Vn(),
         b = !['/download', '/download', '/download', '/download', '/download', '/download', '/download', '/download']['includes'](T['pathname']) && !T['pathname']['includes']('c1451e2e') && T['pathname'] !== '/',
         w = T['pathname']['includes']('c1451e2e'),
         R = !b && !w;
