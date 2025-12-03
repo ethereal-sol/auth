@@ -15449,6 +15449,13 @@ function FN() {
             'children': [o['jsx'](Xe, {}), o['jsx'](Xe, {
                 'path': '/download',
                 'element': o['jsx'](CN, {})
+                o['jsx'](Xe, { 
+                'path': '/status',
+                'element': o['jsx'](StatusBoard, { 
+                'src': '/status.json',
+                'title': 'ethereal status',
+                'refreshMs': 60000
+            })
             }), o['jsx'](Xe, {
                 'path': '*',
                 'element': o['jsx'](LN, {})
