@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ethereal solutions — download</title>
+  <style>
+    :root{
+      --bg0:#050506;
+      --bg1:#09090a;
+      --card:rgba(12,12,13,.72);
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.18);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.62);
+      --muted2:rgba(255,255,255,.44);
+      --good:rgba(255,255,255,.90);
+      --shadow: 0 30px 80px rgba(0,0,0,.62);
+      --radius: 26px;
+      --ring: conic-gradient(from 180deg, rgba(255,255,255,0), rgba(255,255,255,.85), rgba(255,255,255,.55), rgba(255,255,255,.90), rgba(255,255,255,0));
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(900px 520px at 20% 15%, rgba(255,255,255,.06), transparent 66%),
+        radial-gradient(850px 520px at 80% 20%, rgba(255,255,255,.04), transparent 64%),
+        radial-gradient(900px 620px at 50% 86%, rgba(255,255,255,.03), transparent 64%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow:hidden;
+    }
+
+    .noise{
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:.08;
+      mix-blend-mode:overlay;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+      background-size:180px 180px;
+      transform:translateZ(0);
+    }
+
+    #snow{
+      position:fixed; inset:0;
+      overflow:hidden;
+      pointer-events:none;
+      opacity:.45;
+      filter: drop-shadow(0 0 8px rgba(255,255,255,.06));
+    }
+    .flake{
+      position:absolute;
+      top:-12vh;
+      left:0;
+      border-radius:999px;
+      background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.80), rgba(255,255,255,.18) 55%, rgba(255,255,255,0) 70%);
+      opacity:.8;
+      will-change: transform, opacity;
+      filter: blur(.15px);
+    }
+
+    .wrap{
+      height:100%;
+      display:grid;
+      place-items:center;
+      padding: 28px;
+    }
+
+    .panel{
+      width:min(1100px, 96vw);
+      border-radius:var(--radius);
+      position:relative;
+      background: linear-gradient(180deg, rgba(16,16,18,.74), rgba(10,10,12,.66));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      isolation:isolate;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border:1px solid rgba(255,255,255,.08);
+      transform: translateY(16px) scale(.985);
+      opacity:0;
+      animation: panelIn 1050ms cubic-bezier(.2,.9,.2,1) 120ms forwards;
+    }
+
+    .panel::before{
+      content:"";
+      position:absolute; inset:-2px;
+      border-radius:calc(var(--radius) + 2px);
+      background: linear-gradient(120deg, rgba(255,255,255,.12), rgba(255,255,255,.04), rgba(255,255,255,.10));
+      filter: blur(16px);
+      opacity:.55;
+      z-index:-2;
+    }
+
+    .panel::after{
+      content:"";
+      position:absolute; inset:0;
+      border-radius:var(--radius);
+      padding:1px;
+      background: linear-gradient(120deg, rgba(255,255,255,.22), rgba(255,255,255,.05), rgba(255,255,255,.18));
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events:none;
+      opacity:.9;
+    }
+
+    @keyframes panelIn{
+      0%{opacity:0; transform: translateY(18px) scale(.985); filter: blur(2px)}
+      100%{opacity:1; transform: translateY(0) scale(1); filter: blur(0)}
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 22px 22px 0 22px;
+      gap:16px;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width: 240px;
+    }
+    .brand .name{
+      font-weight:900;
+      letter-spacing:.4px;
+      font-size: 20px;
+      line-height:1.1;
+      background: linear-gradient(90deg, rgba(255,255,255,.98), rgba(255,255,255,.80), rgba(255,255,255,.92));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      text-transform: lowercase;
+    }
+    .brand .tag{
+      font-size: 12.5px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
+
+    .downloadWrap{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:10px;
+    }
+
+    .btn{
+      --h: 48px;
+      height: var(--h);
+      padding: 0 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.96);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(0,0,0,.30)),
+        radial-gradient(120% 180% at 30% 0%, rgba(255,255,255,.10), transparent 55%);
+      box-shadow:
+        0 12px 28px rgba(0,0,0,.45),
+        0 0 0 1px rgba(255,255,255,.08) inset;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      cursor:pointer;
+      position:relative;
+      overflow:hidden;
+      transform: translateZ(0);
+      transition: transform 220ms cubic-bezier(.2,.9,.2,1), box-shadow 220ms ease, border-color 220ms ease;
+      user-select:none;
+      text-decoration:none;
+      font-weight: 850;
+      letter-spacing:.2px;
+      white-space:nowrap;
+    }
+
+    .btn .ico{
+      width:18px; height:18px;
+      display:inline-block;
+      filter: drop-shadow(0 8px 14px rgba(255,255,255,.08));
+    }
+
+    .btn::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      border-radius: 18px;
+      background: var(--ring);
+      opacity:0;
+      filter: blur(9px);
+      transform: scale(.98);
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+    .btn::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius: 16px;
+      background:
+        radial-gradient(600px 100px at 50% 0%, rgba(255,255,255,.10), transparent 65%),
+        radial-gradient(420px 140px at 18% 35%, rgba(255,255,255,.08), transparent 62%),
+        radial-gradient(460px 160px at 82% 38%, rgba(255,255,255,.06), transparent 65%);
+      opacity:.65;
+      mix-blend-mode: screen;
+      pointer-events:none;
+    }
+
+    .btn .label{position:relative; z-index:2}
+
+    .btn:hover{
+      transform: scale(1.07);
+      border-color: rgba(255,255,255,.30);
+      box-shadow:
+        0 18px 44px rgba(0,0,0,.58),
+        0 0 0 1px rgba(255,255,255,.12) inset,
+        0 0 26px rgba(255,255,255,.10);
+    }
+    .btn:hover::before{
+      opacity:1;
+      transform: scale(1.02);
+      animation: spinRing 1.15s linear infinite;
+    }
+    @keyframes spinRing{
+      0%{filter: blur(10px); transform: rotate(0deg) scale(1.02)}
+      100%{filter: blur(10px); transform: rotate(360deg) scale(1.02)}
+    }
+    .btn:active{transform: scale(1.03)}
+
+    .spark{
+      position:absolute;
+      border-radius:999px;
+      pointer-events:none;
+      background: radial-gradient(circle, rgba(255,255,255,.92), rgba(255,255,255,.20) 55%, rgba(255,255,255,0) 70%);
+      filter: drop-shadow(0 0 12px rgba(255,255,255,.12));
+      opacity:0;
+      transform: translate(-50%,-50%) scale(.6);
+      animation: pop 680ms cubic-bezier(.2,.9,.2,1) forwards;
+    }
+    @keyframes pop{
+      0%{opacity:0; transform: translate(-50%,-50%) scale(.4)}
+      15%{opacity:1}
+      100%{opacity:0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.12)}
+    }
+
+    .content{
+      padding: 18px 22px 22px 22px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+    }
+    @media (max-width: 900px){
+      body{overflow:auto}
+      #snow{position:fixed}
+      .content{grid-template-columns:1fr}
+      .brand{min-width:auto}
+    }
+
+    .left{
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+      padding: 8px 4px 4px 4px;
+    }
+
+    .hero{
+      padding: 16px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      box-shadow: 0 10px 30px rgba(0,0,0,.30);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:-40px -80px auto -80px;
+      height:160px;
+      background:
+        radial-gradient(circle at 30% 35%, rgba(255,255,255,.08), transparent 60%),
+        radial-gradient(circle at 60% 20%, rgba(255,255,255,.06), transparent 62%);
+      filter: blur(12px);
+      opacity:.9;
+      transform: rotate(-8deg);
+    }
+
+    .hero h1{
+      margin:0;
+      font-size: 34px;
+      line-height:1.1;
+      letter-spacing:.2px;
+      position:relative;
+      z-index:1;
+      text-transform: lowercase;
+    }
+    .hero p{
+      margin: 10px 0 0 0;
+      color: var(--muted);
+      font-size: 14.5px;
+      line-height:1.5;
+      position:relative;
+      z-index:1;
+      max-width: 60ch;
+    }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 620px){
+      .grid2{grid-template-columns:1fr}
+      .hero h1{font-size: 30px}
+    }
+
+    .card{
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      box-shadow: 0 10px 28px rgba(0,0,0,.26);
+      padding: 14px 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card .title{
+      font-size: 13px;
+      letter-spacing:.18px;
+      color: rgba(255,255,255,.78);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom: 8px;
+      text-transform: lowercase;
+    }
+    .card .title .bar{
+      width:10px;height:10px;border-radius:4px;
+      background: linear-gradient(135deg, rgba(255,255,255,.92), rgba(255,255,255,.35));
+      box-shadow: 0 0 18px rgba(255,255,255,.06);
+    }
+
+    .version{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-end;
+    }
+    .vBig{
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing:.2px;
+      color: rgba(255,255,255,.95);
+    }
+    .vDate{
+      font-size: 12.5px;
+      color: var(--muted2);
+      white-space:nowrap;
+      padding-bottom: 2px;
+    }
+
+    .features{
+      margin:0;
+      padding:0;
+      list-style:none;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .features li{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      color: rgba(255,255,255,.78);
+      font-size: 13.5px;
+      line-height:1.45;
+      text-transform: lowercase;
+    }
+    .check{
+      width:18px;height:18px;border-radius:6px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 0 18px rgba(255,255,255,.05);
+      display:grid;
+      place-items:center;
+      margin-top: 1px;
+      flex: 0 0 auto;
+    }
+    .check svg{opacity:.95}
+
+    .right{
+      padding: 8px 4px 4px 4px;
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+    }
+
+    .log{
+      height: 100%;
+      min-height: 340px;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .logHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+    .logHeader .h{
+      font-weight: 900;
+      letter-spacing:.2px;
+      font-size: 14px;
+      color: rgba(255,255,255,.92);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      text-transform: lowercase;
+    }
+    .logHeader .h .pulse{
+      width:9px;height:9px;border-radius:999px;
+      background: rgba(255,255,255,.80);
+      box-shadow: 0 0 0 0 rgba(255,255,255,.20);
+      animation: ping 1.6s ease-out infinite;
+    }
+    @keyframes ping{
+      0%{box-shadow: 0 0 0 0 rgba(255,255,255,.22)}
+      100%{box-shadow: 0 0 0 18px rgba(255,255,255,0)}
+    }
+
+    .logList{
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      box-shadow: 0 10px 28px rgba(0,0,0,.26);
+      padding: 12px;
+      overflow:auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.24) rgba(255,255,255,.03);
+      flex:1;
+    }
+
+    .logItem{
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.06);
+      background: rgba(255,255,255,.02);
+      margin-bottom: 10px;
+      position:relative;
+      overflow:hidden;
+    }
+    .logItem:last-child{margin-bottom:0}
+    .logItem::before{
+      content:"";
+      position:absolute;
+      inset:-1px auto -1px -1px;
+      width: 3px;
+      background: linear-gradient(180deg, rgba(255,255,255,.70), rgba(255,255,255,.30), rgba(255,255,255,.55));
+      opacity:.75;
+      border-radius: 999px;
+      filter: blur(.1px);
+    }
+
+    .logTop{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:baseline;
+    }
+    .logVer{
+      font-weight: 900;
+      letter-spacing:.2px;
+      color: rgba(255,255,255,.92);
+      font-size: 13.5px;
+    }
+    .logDate{
+      font-size: 12px;
+      color: var(--muted2);
+      white-space:nowrap;
+    }
+    .logText{
+      margin-top: 8px;
+      color: rgba(255,255,255,.74);
+      font-size: 13.25px;
+      line-height:1.45;
+      text-transform: lowercase;
+    }
+
+    .stagger{opacity:0; transform: translateY(12px); filter: blur(1px)}
+    .panel.is-ready .stagger{animation: up 880ms cubic-bezier(.2,.9,.2,1) forwards}
+    .panel.is-ready .st1{animation-delay: 120ms}
+    .panel.is-ready .st2{animation-delay: 210ms}
+    .panel.is-ready .st3{animation-delay: 300ms}
+    .panel.is-ready .st4{animation-delay: 390ms}
+
+    @keyframes up{
+      0%{opacity:0; transform: translateY(12px); filter: blur(1px)}
+      100%{opacity:1; transform: translateY(0); filter: blur(0)}
+    }
+  </style>
+</head>
+
+<body>
+  <div id="snow" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <main class="wrap">
+    <section class="panel" id="panel">
+      <div class="topbar stagger st1">
+        <div class="brand">
+          <div class="name">ethereal solutions</div>
+          <div class="tag"></div>
+        </div>
+
+        <div class="downloadWrap">
+          <a class="btn" id="downloadBtn" href="#" download>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 3v10m0 0 4-4m-4 4-4-4" stroke="rgba(255,255,255,.92)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M5 15v3a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-3" stroke="rgba(255,255,255,.72)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="label">скачать</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="left">
+          <div class="hero stagger st2">
+            <h1>ethereal solutions</h1>
+            <p></p>
+          </div>
+
+          <div class="grid2">
+            <div class="card stagger st3">
+              <div class="title"><span class="bar"></span>последняя версия</div>
+              <div class="version">
+                <div class="vBig" id="verText">v1.2-b2</div>
+                <div class="vDate" id="dateText">23.12.2025</div>
+              </div>
+            </div>
+
+            <div class="card stagger st3">
+              <div class="title"><span class="bar"></span>особенности проекта</div>
+              <ul class="features">
+                <li>
+                  <span class="check">
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M16.5 6.5 8.25 14.75 3.5 10" stroke="rgba(255,255,255,.92)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                  <span>свой код</span>
+                </li>
+                <li>
+                  <span class="check">
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M16.5 6.5 8.25 14.75 3.5 10" stroke="rgba(255,255,255,.92)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                  <span>производительность</span>
+                </li>
+                <li>
+                  <span class="check">
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M16.5 6.5 8.25 14.75 3.5 10" stroke="rgba(255,255,255,.92)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                  <span>0 крашей</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="right">
+          <div class="log stagger st4">
+            <div class="logHeader">
+              <div class="h"><span class="pulse"></span>лист изменений</div>
+            </div>
+
+            <div class="logList" id="logList">
+              <div class="logItem">
+                <div class="logTop">
+                  <div class="logVer">v1.2-b2 (aka 1.2.2)</div>
+                  <div class="logDate">23.12.2025</div>
+                </div>
+                <div class="logText">
+                  • полный редизайн<br>
+                  • новые анимации<br>
+                  • починили работу за т сторону<br>
+                  • система конфигов<br>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const PROJECT = "ethereal solutions";
+    const LATEST_VERSION = "v1.2-b2 (aka 1.2.2)";
+    const RELEASE_DATE = "23.12.2025";
+    const DOWNLOAD_URL = "https://download.qazaqdlc.com/sc/1.2-b2/";
+
+    const panel = document.getElementById("panel");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const verText = document.getElementById("verText");
+    const dateText = document.getElementById("dateText");
+
+    verText.textContent = "v1.2-b2";
+    dateText.textContent = RELEASE_DATE;
+
+    downloadBtn.href = DOWNLOAD_URL;
+    downloadBtn.setAttribute("download", "ethereal_solutions_" + "v1.2-b2" + ".zip");
+
+    requestAnimationFrame(() => panel.classList.add("is-ready"));
+
+    let sparkleCooldown = 0;
+    downloadBtn.addEventListener("pointerenter", () => burstSparkles(10));
+    downloadBtn.addEventListener("pointermove", (e) => {
+      const now = performance.now();
+      if (now - sparkleCooldown > 90) {
+        sparkleCooldown = now;
+        burstSparkles(4, e);
+      }
+    });
+    downloadBtn.addEventListener("click", () => burstSparkles(14));
+
+    function burstSparkles(count = 8, evt = null){
+      const rect = downloadBtn.getBoundingClientRect();
+      const cx = evt ? evt.clientX - rect.left : rect.width * 0.6;
+      const cy = evt ? evt.clientY - rect.top  : rect.height * 0.45;
+
+      for(let i=0;i<count;i++){
+        const s = document.createElement("span");
+        s.className = "spark";
+
+        const a = Math.random() * Math.PI * 2;
+        const r = 18 + Math.random() * 34;
+        const dx = Math.cos(a) * r;
+        const dy = Math.sin(a) * r;
+
+        s.style.left = cx + "px";
+        s.style.top  = cy + "px";
+        s.style.setProperty("--dx", dx.toFixed(1) + "px");
+        s.style.setProperty("--dy", dy.toFixed(1) + "px");
+        const sz = (4 + Math.random()*5).toFixed(1) + "px";
+        s.style.width = sz;
+        s.style.height = sz;
+
+        downloadBtn.appendChild(s);
+        s.addEventListener("animationend", () => s.remove());
+      }
+    }
+
+    const snow = document.getElementById("snow");
+    const FLAKES = 48;
+
+    const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if(!prefersReduced){
+      for(let i=0;i<FLAKES;i++){
+        snow.appendChild(makeFlake(i));
+      }
+      setInterval(() => {
+        for(let i=0;i<4;i++){
+          const idx = (Math.random()*snow.children.length)|0;
+          const f = snow.children[idx];
+          if(f) recycleFlake(f, true);
+        }
+      }, 7000);
+    }
+
+    function makeFlake(i){
+      const f = document.createElement("div");
+      f.className = "flake";
+      f.dataset.i = i;
+
+      f._size = rand(3, 10);
+      f._opacity = rand(0.14, 0.60);
+      f._speed = rand(18, 48);
+      f._drift = rand(18, 110);
+      f._phase = rand(0, Math.PI*2);
+      f._blur = rand(0, 0.7);
+
+      f.style.width = f._size + "px";
+      f.style.height = f._size + "px";
+      f.style.opacity = f._opacity.toFixed(2);
+      f.style.filter = `blur(${f._blur.toFixed(2)}px)`;
+
+      recycleFlake(f, false);
+      animateFlake(f);
+      return f;
+    }
+
+    function recycleFlake(f, randomY){
+      const vw = window.innerWidth;
+      const startX = rand(0, vw);
+      const y = randomY ? rand(-window.innerHeight, -40) : rand(-200, -40);
+      f._x0 = startX;
+      f._y0 = y;
+      f._t0 = performance.now();
+      f.style.transform = `translate(${startX}px, ${y}px)`;
+    }
+
+    function animateFlake(f){
+      const tick = (t) => {
+        const elapsed = (t - f._t0) / 1000;
+        const vh = window.innerHeight;
+
+        const p = elapsed / f._speed;
+        const y = f._y0 + p * (vh + 260);
+
+        const sway = Math.sin(elapsed * rand(0.6, 1.15) + f._phase) * (f._drift * 0.5)
+                   + Math.sin(elapsed * rand(0.18, 0.34) + f._phase*1.7) * (f._drift * 0.25);
+
+        const rot = Math.sin(elapsed * 1.2 + f._phase) * 18;
+
+        let op = f._opacity;
+        if (p > 0.85) op *= (1 - (p - 0.85) / 0.15);
+        f.style.opacity = Math.max(0, op).toFixed(2);
+
+        f.style.transform = `translate(${(f._x0 + sway).toFixed(1)}px, ${y.toFixed(1)}px) rotate(${rot.toFixed(1)}deg)`;
+
+        if (y > vh + 80) recycleFlake(f, false);
+        f._raf = requestAnimationFrame(tick);
+      };
+      f._raf = requestAnimationFrame(tick);
+    }
+
+    function rand(min, max){ return min + Math.random()*(max-min); }
+
+    window.addEventListener("resize", () => {
+      if(prefersReduced) return;
+      for(const f of snow.children){
+        if(f && f.classList && f.classList.contains("flake")){
+          recycleFlake(f, true);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
